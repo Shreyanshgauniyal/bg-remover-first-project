@@ -1,4 +1,3 @@
-
 import path from "path";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
@@ -166,27 +165,32 @@ function devServerFnErrorLogger() {
   };
 }
 
-export default defineConfig({
-  server: {
-    host: "::",
-    port: 8080,
-  },
+export default defineConfig(({ command }) => {
+  const isProduction = command === "build";
 
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+  return {
+    server: {
+      host: "::",
+      port: 8080,
     },
-  },
 
-  plugins: [
-    tailwindcss(),
-    tsConfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
-    devClientErrorLogger(),
-    devServerFnErrorLogger(),
-    tanstackStart(),
-    viteReact(),
-    netlify(),
-  ],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
+
+    plugins: [
+      tailwindcss(),
+      tsConfigPaths({
+        projects: ["./tsconfig.json"],
+      }),
+      devClientErrorLogger(),
+      devServerFnErrorLogger(),
+      tanstackStart(),
+      viteReact(),
+      // Sirf production build/deploy ke waqt Netlify plugin active hoga, local dev mein nahi
+      ...(isProduction ? [netlify()] : []),
+    ],
+  };
 });
