@@ -1,0 +1,8 @@
+
+[build]
+  command = "vite build"
+  publish = "dist/client"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["konva", "react-konva"]
